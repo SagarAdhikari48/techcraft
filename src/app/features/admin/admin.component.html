@@ -1,3 +1,140 @@
-<div class="container py-4">
-  <h2>Admin Panel</h2>
+<div class="admin">
+
+  <div class="admin__header">
+    <div>
+      <h1 class="admin__title">Admin Panel</h1>
+      <p class="admin__subtitle">Manage reviewer assignments and monitor all applications</p>
+    </div>
+  </div>
+
+  @if (loadState() === 'loading') {
+    <div class="admin__state" role="status" aria-live="polite">
+      <div class="spinner-border text-primary" aria-hidden="true"></div>
+      <p class="mt-2 text-muted">Loading…</p>
+    </div>
+  }
+
+  @if (loadState() === 'error') {
+    <div class="admin__state" role="alert">
+      <i class="bi bi-exclamation-circle text-danger fs-2" aria-hidden="true"></i>
+      <p class="text-danger mt-2">Failed to load data.</p>
+    </div>
+  }
+
+  @if (loadState() === 'success') {
+
+    <!-- Status count cards -->
+    <div class="admin__counts" role="list" aria-label="Application status summary">
+      @for (card of [
+        { label: 'Total',        value: statusCounts().total,       cls: 'primary' },
+        { label: 'Submitted',    value: statusCounts().submitted,   cls: 'info' },
+        { label: 'Under Review', value: statusCounts().underReview, cls: 'warning' },
+        { label: 'Approved',     value: statusCounts().approved,    cls: 'success' },
+        { label: 'Rejected',     value: statusCounts().rejected,    cls: 'danger' },
+        { label: 'On Hold',      value: statusCounts().onHold,      cls: 'secondary' }
+      ]; track card.label) {
+        <div class="admin__count-card" role="listitem">
+          <span class="admin__count-value text-{{ card.cls }}">{{ card.value }}</span>
+          <span class="admin__count-label">{{ card.label }}</span>
+        </div>
+      }
+    </div>
+
+    <!-- Filters -->
+    <div class="admin__filters" [formGroup]="filterForm">
+      <div class="admin__search-wrap">
+        <i class="bi bi-search admin__search-icon" aria-hidden="true"></i>
+        <input
+          type="search"
+          class="form-control admin__search"
+          formControlName="search"
+          placeholder="Search by merchant name or ID…"
+          aria-label="Search applications"
+        />
+      </div>
+
+      <select class="form-select admin__select" formControlName="status" aria-label="Filter by status">
+        <option value="">All Statuses</option>
+        <option value="DRAFT">Draft</option>
+        <option value="SUBMITTED">Submitted</option>
+        <option value="UNDER_REVIEW">Under Review</option>
+        <option value="APPROVED">Approved</option>
+        <option value="REJECTED">Rejected</option>
+        <option value="ON_HOLD">On Hold</option>
+      </select>
+
+      <select class="form-select admin__select" formControlName="reviewer" aria-label="Filter by reviewer">
+        <option value="">All Reviewers</option>
+        <option value="__unassigned__">Unassigned</option>
+        @for (r of reviewers(); track r.id) {
+          <option [value]="r.id">{{ r.name }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Applications table -->
+    @if (filtered().length === 0) {
+      <div class="admin__state" role="status">
+        <i class="bi bi-inbox fs-2 text-muted" aria-hidden="true"></i>
+        <p class="text-muted mt-2">No applications match the current filters.</p>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="table admin__table" aria-label="All merchant applications">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Merchant</th>
+              <th scope="col">Status</th>
+              <th scope="col">Assigned Reviewer</th>
+              <th scope="col">Updated</th>
+              <th scope="col" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (app of filtered(); track trackById($index, app)) {
+              <tr>
+                <td class="admin__id text-muted">{{ app.id }}</td>
+                <td class="fw-semibold">{{ app.merchantName }}</td>
+                <td><app-status-badge [status]="app.status" /></td>
+                <td>
+                  <select
+                    class="form-select form-select-sm admin__assign-select"
+                    [value]="app.assignedReviewer ?? ''"
+                    (change)="assignReviewer(app.id, $any($event.target).value)"
+                    [disabled]="saving() === app.id"
+                    [attr.aria-label]="'Assign reviewer for ' + app.merchantName"
+                  >
+                    <option value="">Unassigned</option>
+                    @for (r of reviewers(); track r.id) {
+                      <option [value]="r.id">{{ r.name }}</option>
+                    }
+                  </select>
+                  @if (saving() === app.id) {
+                    <span class="spinner-border spinner-border-sm ms-1 text-primary" aria-hidden="true"></span>
+                  }
+                </td>
+                <td class="text-muted small">{{ formatDate(app.updatedAt) }}</td>
+                <td class="text-end">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    (click)="viewApplication(app.id)"
+                    [attr.aria-label]="'View ' + app.merchantName"
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <p class="admin__count-text text-muted" aria-live="polite">
+        Showing {{ filtered().length }} of {{ applications().length }} applications
+      </p>
+    }
+  }
+
 </div>

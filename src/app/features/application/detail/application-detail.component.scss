@@ -1,11 +1,15 @@
 @use 'styles/variables' as v;
 
-:host { display: block; }
+:host {
+  display: block;
+  height: 100%;
+}
 
 .detail {
   padding: 1.5rem;
   max-width: 900px;
   margin: 0 auto;
+  min-height: 100%;
 
   &__header {
     display: flex;

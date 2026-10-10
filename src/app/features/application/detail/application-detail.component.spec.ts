@@ -6,6 +6,7 @@ import { vi } from 'vitest';
 import { ApplicationDetailComponent } from './application-detail.component';
 import { ApplicationApiService } from '../../../../mock-api/application-api.service';
 import { PermissionService } from '../../../core/permissions/permission.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { MerchantApplication } from '../../../core/models/application.model';
 
 const mockApp: MerchantApplication = {
@@ -57,6 +58,7 @@ function buildApiStub(appOrError: MerchantApplication | 'error' = mockApp) {
       appOrError === 'error' ? throwError(() => ({ status: 404 })) : of(appOrError)
     ),
     updateStatus: vi.fn().mockReturnValue(of({ ...mockApp, status: 'APPROVED' as const })),
+    updateApplication: vi.fn().mockReturnValue(of({ ...mockApp, status: 'APPROVED' as const })),
   };
 }
 
@@ -79,11 +81,16 @@ function setup(opts: {
   const apiStub  = buildApiStub(appOrError);
   const permStub = buildPermStub(canReview, canReveal);
 
+  const authStub = {
+    user: signal({ id: 'usr-002', name: 'Rajan Shrestha', email: 'reviewer@techcraft.dev', role: 'REVIEWER' as const }),
+  };
+
   TestBed.configureTestingModule({
     imports: [ApplicationDetailComponent],
     providers: [
       { provide: ApplicationApiService, useValue: apiStub },
       { provide: PermissionService,     useValue: permStub },
+      { provide: AuthService,           useValue: authStub },
       { provide: Router,                useValue: routerStub },
       {
         provide: ActivatedRoute,
@@ -183,13 +190,16 @@ describe('ApplicationDetailComponent', () => {
       expect(apiStub.updateStatus).not.toHaveBeenCalled();
     });
 
-    it('submitReview() should call updateStatus and update application on success', fakeAsync(() => {
+    it('submitReview() should call updateApplication and update application on success', fakeAsync(() => {
       const { component, apiStub } = setup();
       tick(400);
       component.reviewForm.setValue({ decision: 'APPROVE', notes: 'Looks good, approved.' });
       component.submitReview();
       tick(400);
-      expect(apiStub.updateStatus).toHaveBeenCalledWith('app-0001', 'APPROVED');
+      expect(apiStub.updateApplication).toHaveBeenCalledWith(
+        'app-0001',
+        expect.objectContaining({ status: 'APPROVED' })
+      );
       expect(component.application()?.status).toBe('APPROVED');
     }));
 

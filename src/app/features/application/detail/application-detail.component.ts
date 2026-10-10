@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { ApplicationApiService } from '../../../../mock-api/application-api.service';
 import { PermissionService } from '../../../core/permissions/permission.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { MerchantApplication, RiskDecision } from '../../../core/models/application.model';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
 import { MaskPipe } from '../../../shared/pipes/mask.pipe';
@@ -22,6 +23,7 @@ export class ApplicationDetailComponent implements OnInit {
   private readonly router     = inject(Router);
   private readonly api        = inject(ApplicationApiService);
   private readonly permissions = inject(PermissionService);
+  private readonly auth       = inject(AuthService);
   private readonly fb         = inject(FormBuilder);
 
   readonly loadState    = signal<LoadState>('loading');
@@ -68,8 +70,23 @@ export class ApplicationDetailComponent implements OnInit {
       HOLD:    'ON_HOLD',
     };
 
+    const currentUser = this.auth.user();
+    const newHistoryEntry = {
+      id:           `risk-${app.id}-${Date.now()}`,
+      decision:     decision as RiskDecision,
+      notes,
+      reviewerId:   currentUser?.id ?? 'unknown',
+      reviewerName: currentUser?.name ?? 'Reviewer',
+      createdAt:    new Date().toISOString(),
+    };
+
+    const updatedRiskHistory = [...app.riskHistory, newHistoryEntry];
+
     this.submitting.set(true);
-    this.api.updateStatus(app.id, statusMap[decision]).subscribe({
+    this.api.updateApplication(app.id, {
+      status: statusMap[decision],
+      riskHistory: updatedRiskHistory,
+    }).subscribe({
       next: (updated) => {
         this.application.set(updated);
         this.submitting.set(false);

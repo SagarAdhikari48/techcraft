@@ -1,3 +1,401 @@
-<div class="container py-4">
-  <h2>New Merchant Application</h2>
+<div class="wizard">
+
+  <div class="wizard__top">
+    <div class="wizard__title-row">
+      <h1 class="wizard__title">New Merchant Application</h1>
+      @if (saveStatus() === 'saving') {
+        <span class="wizard__save-status text-muted" aria-live="polite">
+          <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>Saving…
+        </span>
+      }
+      @if (saveStatus() === 'saved') {
+        <span class="wizard__save-status text-success" aria-live="polite">
+          <i class="bi bi-check-circle me-1" aria-hidden="true"></i>Draft saved
+        </span>
+      }
+      @if (saveStatus() === 'error') {
+        <span class="wizard__save-status text-danger" aria-live="polite">
+          <i class="bi bi-exclamation-circle me-1" aria-hidden="true"></i>Save failed
+        </span>
+      }
+    </div>
+    <app-stepper [steps]="steps" [currentIndex]="currentIndex()" />
+  </div>
+
+  <div class="wizard__body" [formGroup]="form">
+
+    <!-- ─── Step 1: Business Info ─────────────────────────────────────── -->
+    @if (currentIndex() === 0) {
+      <section class="wizard__step" aria-labelledby="step1-heading">
+        <h2 id="step1-heading" class="wizard__step-title">Business Information</h2>
+
+        <div formGroupName="businessInfo">
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="legalName" class="form-label">Legal Business Name <span class="text-danger">*</span></label>
+              <input id="legalName" type="text" class="form-control"
+                formControlName="legalName"
+                [class.is-invalid]="businessInfo.controls.legalName.invalid && businessInfo.controls.legalName.touched"
+                placeholder="Acme Corp Inc." />
+              @if (businessInfo.controls.legalName.invalid && businessInfo.controls.legalName.touched) {
+                <div class="invalid-feedback">
+                  @if (businessInfo.controls.legalName.errors?.['required']) { Legal name is required. }
+                  @else if (businessInfo.controls.legalName.errors?.['minlength']) { Minimum 2 characters. }
+                </div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="tradeName" class="form-label">Trade Name <span class="text-muted">(optional)</span></label>
+              <input id="tradeName" type="text" class="form-control"
+                formControlName="tradeName" placeholder="DBA name" />
+            </div>
+
+            <div class="col-md-6">
+              <label for="businessType" class="form-label">Business Type <span class="text-danger">*</span></label>
+              <select id="businessType" class="form-select"
+                formControlName="businessType"
+                [class.is-invalid]="businessInfo.controls.businessType.invalid && businessInfo.controls.businessType.touched">
+                <option value="">Select type…</option>
+                @for (bt of businessTypes; track bt.value) {
+                  <option [value]="bt.value">{{ bt.label }}</option>
+                }
+              </select>
+              @if (businessInfo.controls.businessType.invalid && businessInfo.controls.businessType.touched) {
+                <div class="invalid-feedback">Business type is required.</div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="taxId" class="form-label">Tax ID (EIN) <span class="text-danger">*</span></label>
+              <input id="taxId" type="text" class="form-control"
+                formControlName="taxId"
+                [class.is-invalid]="businessInfo.controls.taxId.invalid && businessInfo.controls.taxId.touched"
+                placeholder="12-3456789" />
+              @if (businessInfo.controls.taxId.invalid && businessInfo.controls.taxId.touched) {
+                <div class="invalid-feedback">
+                  @if (businessInfo.controls.taxId.errors?.['required']) { Tax ID is required. }
+                  @else { Format must be XX-XXXXXXX. }
+                </div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="incorporationDate" class="form-label">Incorporation Date <span class="text-danger">*</span></label>
+              <input id="incorporationDate" type="date" class="form-control"
+                formControlName="incorporationDate"
+                [class.is-invalid]="businessInfo.controls.incorporationDate.invalid && businessInfo.controls.incorporationDate.touched" />
+              @if (businessInfo.controls.incorporationDate.invalid && businessInfo.controls.incorporationDate.touched) {
+                <div class="invalid-feedback">Incorporation date is required.</div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="website" class="form-label">Website <span class="text-muted">(optional)</span></label>
+              <input id="website" type="url" class="form-control"
+                formControlName="website"
+                [class.is-invalid]="businessInfo.controls.website.invalid && businessInfo.controls.website.touched"
+                placeholder="https://example.com" />
+              @if (businessInfo.controls.website.invalid && businessInfo.controls.website.touched) {
+                <div class="invalid-feedback">Enter a valid URL including https://</div>
+              }
+            </div>
+
+            <div class="col-12">
+              <label for="description" class="form-label">Business Description <span class="text-danger">*</span></label>
+              <textarea id="description" class="form-control" rows="3"
+                formControlName="description"
+                [class.is-invalid]="businessInfo.controls.description.invalid && businessInfo.controls.description.touched"
+                placeholder="Describe your business and the products or services you sell…"></textarea>
+              @if (businessInfo.controls.description.invalid && businessInfo.controls.description.touched) {
+                <div class="invalid-feedback">
+                  @if (businessInfo.controls.description.errors?.['required']) { Description is required. }
+                  @else { Minimum 20 characters required. }
+                </div>
+              }
+            </div>
+          </div>
+
+        </div>
+      </section>
+    }
+
+    <!-- ─── Step 2: Contact Info ───────────────────────────────────────── -->
+    @if (currentIndex() === 1) {
+      <section class="wizard__step" aria-labelledby="step2-heading">
+        <h2 id="step2-heading" class="wizard__step-title">Owner &amp; Contact Information</h2>
+
+        <div formGroupName="contactInfo">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="ownerName" class="form-label">Owner Full Name <span class="text-danger">*</span></label>
+              <input id="ownerName" type="text" class="form-control"
+                formControlName="ownerName"
+                [class.is-invalid]="contactInfo.controls.ownerName.invalid && contactInfo.controls.ownerName.touched" />
+              @if (contactInfo.controls.ownerName.invalid && contactInfo.controls.ownerName.touched) {
+                <div class="invalid-feedback">Owner name is required.</div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="ownerEmail" class="form-label">Email Address <span class="text-danger">*</span></label>
+              <input id="ownerEmail" type="email" class="form-control"
+                formControlName="ownerEmail"
+                [class.is-invalid]="contactInfo.controls.ownerEmail.invalid && contactInfo.controls.ownerEmail.touched"
+                autocomplete="email" />
+              @if (contactInfo.controls.ownerEmail.invalid && contactInfo.controls.ownerEmail.touched) {
+                <div class="invalid-feedback">
+                  @if (contactInfo.controls.ownerEmail.errors?.['required']) { Email is required. }
+                  @else { Enter a valid email address. }
+                </div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="ownerPhone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+              <input id="ownerPhone" type="tel" class="form-control"
+                formControlName="ownerPhone"
+                [class.is-invalid]="contactInfo.controls.ownerPhone.invalid && contactInfo.controls.ownerPhone.touched"
+                placeholder="+1-555-0000" />
+              @if (contactInfo.controls.ownerPhone.invalid && contactInfo.controls.ownerPhone.touched) {
+                <div class="invalid-feedback">Enter a valid phone number.</div>
+              }
+            </div>
+          </div>
+
+          <h3 class="wizard__sub-title mt-4">Business Address</h3>
+          <div class="row g-3" formGroupName="address">
+            <div class="col-12">
+              <label for="street" class="form-label">Street Address <span class="text-danger">*</span></label>
+              <input id="street" type="text" class="form-control"
+                formControlName="street"
+                [class.is-invalid]="address.controls.street.invalid && address.controls.street.touched" />
+              @if (address.controls.street.invalid && address.controls.street.touched) {
+                <div class="invalid-feedback">Street address is required.</div>
+              }
+            </div>
+
+            <div class="col-md-5">
+              <label for="city" class="form-label">City <span class="text-danger">*</span></label>
+              <input id="city" type="text" class="form-control"
+                formControlName="city"
+                [class.is-invalid]="address.controls.city.invalid && address.controls.city.touched" />
+              @if (address.controls.city.invalid && address.controls.city.touched) {
+                <div class="invalid-feedback">City is required.</div>
+              }
+            </div>
+
+            <div class="col-md-3">
+              <label for="state" class="form-label">State <span class="text-danger">*</span></label>
+              <input id="state" type="text" class="form-control" maxlength="2"
+                formControlName="state"
+                [class.is-invalid]="address.controls.state.invalid && address.controls.state.touched"
+                placeholder="NY" />
+              @if (address.controls.state.invalid && address.controls.state.touched) {
+                <div class="invalid-feedback">State is required.</div>
+              }
+            </div>
+
+            <div class="col-md-4">
+              <label for="postalCode" class="form-label">ZIP Code <span class="text-danger">*</span></label>
+              <input id="postalCode" type="text" class="form-control"
+                formControlName="postalCode"
+                [class.is-invalid]="address.controls.postalCode.invalid && address.controls.postalCode.touched"
+                placeholder="10001" />
+              @if (address.controls.postalCode.invalid && address.controls.postalCode.touched) {
+                <div class="invalid-feedback">Enter a valid 5-digit ZIP code.</div>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ─── Step 3: Banking Details ───────────────────────────────────── -->
+    @if (currentIndex() === 2) {
+      <section class="wizard__step" aria-labelledby="step3-heading">
+        <h2 id="step3-heading" class="wizard__step-title">Banking &amp; Financial Details</h2>
+        <p class="wizard__step-desc text-muted">
+          <i class="bi bi-lock-fill me-1" aria-hidden="true"></i>
+          Sensitive fields are stored securely and masked in the portal.
+        </p>
+
+        <div formGroupName="bankingInfo">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="bankName" class="form-label">Bank Name <span class="text-danger">*</span></label>
+              <input id="bankName" type="text" class="form-control"
+                formControlName="bankName"
+                [class.is-invalid]="bankingInfo.controls.bankName.invalid && bankingInfo.controls.bankName.touched" />
+              @if (bankingInfo.controls.bankName.invalid && bankingInfo.controls.bankName.touched) {
+                <div class="invalid-feedback">Bank name is required.</div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="routingNumber" class="form-label">
+                Routing Number <span class="text-danger">*</span>
+                <span class="wizard__sensitive-tag">Sensitive</span>
+              </label>
+              <input id="routingNumber" type="text" class="form-control"
+                formControlName="routingNumber"
+                [class.is-invalid]="bankingInfo.controls.routingNumber.invalid && bankingInfo.controls.routingNumber.touched"
+                placeholder="9-digit ABA number" maxlength="9"
+                autocomplete="off" />
+              @if (bankingInfo.controls.routingNumber.invalid && bankingInfo.controls.routingNumber.touched) {
+                <div class="invalid-feedback">
+                  @if (bankingInfo.controls.routingNumber.errors?.['required']) { Routing number is required. }
+                  @else { Must be exactly 9 digits. }
+                </div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="accountNumber" class="form-label">
+                Account Number <span class="text-danger">*</span>
+                <span class="wizard__sensitive-tag">Sensitive</span>
+              </label>
+              <input id="accountNumber" type="text" class="form-control"
+                formControlName="accountNumber"
+                [class.is-invalid]="bankingInfo.controls.accountNumber.invalid && bankingInfo.controls.accountNumber.touched"
+                placeholder="8–17 digit account number"
+                autocomplete="off" />
+              @if (bankingInfo.controls.accountNumber.invalid && bankingInfo.controls.accountNumber.touched) {
+                <div class="invalid-feedback">
+                  @if (bankingInfo.controls.accountNumber.errors?.['required']) { Account number is required. }
+                  @else { Must be 8–17 digits. }
+                </div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="monthlyVolume" class="form-label">Estimated Monthly Volume ($) <span class="text-danger">*</span></label>
+              <input id="monthlyVolume" type="number" class="form-control" min="1"
+                formControlName="monthlyVolume"
+                [class.is-invalid]="bankingInfo.controls.monthlyVolume.invalid && bankingInfo.controls.monthlyVolume.touched"
+                placeholder="e.g. 50000" />
+              @if (bankingInfo.controls.monthlyVolume.invalid && bankingInfo.controls.monthlyVolume.touched) {
+                <div class="invalid-feedback">Enter a valid positive amount.</div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="averageTicket" class="form-label">Average Transaction ($) <span class="text-danger">*</span></label>
+              <input id="averageTicket" type="number" class="form-control" min="1"
+                formControlName="averageTicket"
+                [class.is-invalid]="bankingInfo.controls.averageTicket.invalid && bankingInfo.controls.averageTicket.touched"
+                placeholder="e.g. 75" />
+              @if (bankingInfo.controls.averageTicket.invalid && bankingInfo.controls.averageTicket.touched) {
+                <div class="invalid-feedback">Enter a valid positive amount.</div>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ─── Step 4: Review & Submit ───────────────────────────────────── -->
+    @if (currentIndex() === 3) {
+      <section class="wizard__step" aria-labelledby="step4-heading">
+        <h2 id="step4-heading" class="wizard__step-title">Review &amp; Submit</h2>
+        <p class="text-muted">Please review your information before submitting.</p>
+
+        <div class="wizard__review">
+
+          <div class="wizard__review-section">
+            <div class="wizard__review-header">
+              <h3>Business Information</h3>
+              <button type="button" class="btn btn-sm btn-link" (click)="goToStep(0)" aria-label="Edit business information">Edit</button>
+            </div>
+            <dl class="wizard__dl">
+              <dt>Legal Name</dt><dd>{{ form.value.businessInfo?.legalName }}</dd>
+              <dt>Trade Name</dt><dd>{{ form.value.businessInfo?.tradeName || '—' }}</dd>
+              <dt>Business Type</dt><dd>{{ form.value.businessInfo?.businessType }}</dd>
+              <dt>Tax ID</dt><dd>{{ form.value.businessInfo?.taxId }}</dd>
+              <dt>Incorporated</dt><dd>{{ form.value.businessInfo?.incorporationDate }}</dd>
+              @if (form.value.businessInfo?.website) {
+                <dt>Website</dt><dd>{{ form.value.businessInfo?.website }}</dd>
+              }
+            </dl>
+          </div>
+
+          <div class="wizard__review-section">
+            <div class="wizard__review-header">
+              <h3>Contact Information</h3>
+              <button type="button" class="btn btn-sm btn-link" (click)="goToStep(1)" aria-label="Edit contact information">Edit</button>
+            </div>
+            <dl class="wizard__dl">
+              <dt>Owner</dt><dd>{{ form.value.contactInfo?.ownerName }}</dd>
+              <dt>Email</dt><dd>{{ form.value.contactInfo?.ownerEmail }}</dd>
+              <dt>Phone</dt><dd>{{ form.value.contactInfo?.ownerPhone }}</dd>
+              <dt>Address</dt>
+              <dd>
+                {{ form.value.contactInfo?.address?.street }},
+                {{ form.value.contactInfo?.address?.city }},
+                {{ form.value.contactInfo?.address?.state }}
+                {{ form.value.contactInfo?.address?.postalCode }}
+              </dd>
+            </dl>
+          </div>
+
+          <div class="wizard__review-section">
+            <div class="wizard__review-header">
+              <h3>Banking Details</h3>
+              <button type="button" class="btn btn-sm btn-link" (click)="goToStep(2)" aria-label="Edit banking details">Edit</button>
+            </div>
+            <dl class="wizard__dl">
+              <dt>Bank</dt><dd>{{ form.value.bankingInfo?.bankName }}</dd>
+              <dt>Account Number</dt><dd class="text-muted fst-italic">●●●●●●●● (masked)</dd>
+              <dt>Routing Number</dt><dd class="text-muted fst-italic">●●●●●●●●● (masked)</dd>
+              <dt>Monthly Volume</dt><dd>${{ form.value.bankingInfo?.monthlyVolume | number }}</dd>
+              <dt>Avg. Transaction</dt><dd>${{ form.value.bankingInfo?.averageTicket | number }}</dd>
+            </dl>
+          </div>
+
+        </div>
+
+        @if (form.invalid) {
+          <div class="alert alert-warning mt-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>
+            Some required fields are incomplete. Please go back and fix them before submitting.
+          </div>
+        }
+      </section>
+    }
+
+  </div>
+
+  <div class="wizard__footer">
+    <div class="wizard__footer-left">
+      @if (hasDraft() && currentIndex() === 0) {
+        <button type="button" class="btn btn-sm btn-outline-danger" (click)="clearDraft()">
+          Discard Draft
+        </button>
+      }
+    </div>
+
+    <div class="wizard__footer-nav">
+      @if (currentIndex() > 0) {
+        <button type="button" class="btn btn-outline-secondary" (click)="back()">
+          <i class="bi bi-chevron-left me-1" aria-hidden="true"></i>Back
+        </button>
+      }
+
+      @if (currentIndex() < steps.length - 1) {
+        <button type="button" class="btn btn-primary" (click)="next()">
+          Continue<i class="bi bi-chevron-right ms-1" aria-hidden="true"></i>
+        </button>
+      } @else {
+        <button type="button" class="btn btn-success" (click)="submit()" [disabled]="submitting()">
+          @if (submitting()) {
+            <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Submitting…
+          } @else {
+            <i class="bi bi-send-fill me-1" aria-hidden="true"></i>Submit Application
+          }
+        </button>
+      }
+    </div>
+  </div>
+
 </div>

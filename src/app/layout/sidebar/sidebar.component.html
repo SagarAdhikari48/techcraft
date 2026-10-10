@@ -41,4 +41,18 @@
     </div>
   }
 
+  <div class="sidebar__logout">
+    <button
+      type="button"
+      class="sidebar__logout-btn"
+      (click)="logout()"
+      [attr.aria-label]="collapsed() ? 'Sign out' : null"
+    >
+      <i class="bi bi-box-arrow-right sidebar__logout-icon" aria-hidden="true"></i>
+      @if (!collapsed()) {
+        <span>Sign out</span>
+      }
+    </button>
+  </div>
+
 </aside>

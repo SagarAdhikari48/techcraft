@@ -41,4 +41,9 @@ export class SidebarComponent {
 
     return links;
   });
+
+  logout(): void {
+    this.closeMobile.emit();
+    this.auth.logout();
+  }
 }

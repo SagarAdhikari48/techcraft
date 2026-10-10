@@ -141,4 +141,43 @@ $sidebar-narrow:  64px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
+
+  &__logout {
+    padding: 0.5rem;
+    border-top: 1px solid rgba(255,255,255,.07);
+  }
+
+  &__logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border: none;
+    background: none;
+    border-radius: 8px;
+    color: $sidebar-text;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover {
+      background: rgba(220, 53, 69, 0.15);
+      color: #ff6b6b;
+    }
+
+    &:focus-visible {
+      outline: 2px solid v.$primary;
+      outline-offset: 2px;
+    }
+  }
+
+  &__logout-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+  }
 }

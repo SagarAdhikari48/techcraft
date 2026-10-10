@@ -1,22 +1,25 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, throwError } from 'rxjs';
+import { environment } from '../environments/environment';
 import { AuthService } from '../app/core/auth/auth.service';
 import { ApplicationSummary, ApplicationStatus, MerchantApplication } from '../app/core/models/application.model';
 import { PaginatedResponse, PaginationParams } from '../app/core/models/pagination.model';
-
-const BASE = '/api/applications';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationApiService {
   private readonly http = inject(HttpClient);
   private readonly auth = inject(AuthService);
 
+  private get base(): string {
+    return `${environment.apiUrl}/applications`;
+  }
+
   getApplications(params: PaginationParams): Observable<PaginatedResponse<ApplicationSummary>> {
     const role   = this.auth.role();
     const userId = this.auth.user()?.id;
 
-    return this.http.get<MerchantApplication[]>(BASE).pipe(
+    return this.http.get<MerchantApplication[]>(this.base).pipe(
       map((all) => {
         let filtered = all.filter((app) => {
           if (role === 'SALES')    return app.createdBy === userId;
@@ -46,7 +49,7 @@ export class ApplicationApiService {
         }
 
         const total      = filtered.length;
-        const totalPages = Math.ceil(total / params.pageSize);
+        const totalPages = Math.ceil(total / params.pageSize) || 1;
         const start      = (params.page - 1) * params.pageSize;
         const page       = filtered.slice(start, start + params.pageSize);
 
@@ -66,7 +69,7 @@ export class ApplicationApiService {
   }
 
   getApplicationById(id: string): Observable<MerchantApplication> {
-    return this.http.get<MerchantApplication>(`${BASE}/${id}`).pipe(
+    return this.http.get<MerchantApplication>(`${this.base}/${id}`).pipe(
       catchError(() => throwError(() => ({ status: 404, message: `Application ${id} not found` })))
     );
   }
@@ -82,11 +85,11 @@ export class ApplicationApiService {
       createdAt:   new Date().toISOString(),
       updatedAt:   new Date().toISOString(),
     };
-    return this.http.post<MerchantApplication>(BASE, newApp);
+    return this.http.post<MerchantApplication>(this.base, newApp);
   }
 
   updateApplication(id: string, data: Partial<MerchantApplication>): Observable<MerchantApplication> {
-    return this.http.patch<MerchantApplication>(`${BASE}/${id}`, {
+    return this.http.patch<MerchantApplication>(`${this.base}/${id}`, {
       ...data,
       updatedAt: new Date().toISOString(),
     });
@@ -104,7 +107,7 @@ export class ApplicationApiService {
   }
 
   getAllApplicationsUnpaged(): Observable<ApplicationSummary[]> {
-    return this.http.get<MerchantApplication[]>(BASE).pipe(
+    return this.http.get<MerchantApplication[]>(this.base).pipe(
       map((all) => all.map((app) => ({
         id:               app.id,
         status:           app.status,

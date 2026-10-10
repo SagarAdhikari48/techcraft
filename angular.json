@@ -66,6 +66,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "mock-server/proxy.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "techcraft-portal:build:production"

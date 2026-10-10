@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "concurrently \"npm run mock-server\" \"ng serve --proxy-config mock-server/proxy.json\"",
+    "start": "concurrently \"npm run mock-server\" \"ng serve\"",
     "start:ng": "ng serve",
-    "mock-server": "node mock-server/generate-db.mjs && json-server --watch mock-server/db.json --routes mock-server/routes.json --port 3000 --delay 400",
+    "mock-server": "node mock-server/generate-db.mjs && json-server --watch mock-server/db.json --routes mock-server/routes.json --port 3000",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "vitest --run",

@@ -1,5 +1,3 @@
 {
-  "/api/applications*": "/applications$1",
-  "/api/users*": "/users$1",
-  "/api/auth/refresh": "/auth-refresh"
+  "/auth/refresh": "/users"
 }

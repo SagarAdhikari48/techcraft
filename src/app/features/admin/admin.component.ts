@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApplicationApiService } from '../../../mock-api/application-api.service';
 import { UsersApiService } from '../../../mock-api/users-api.service';
 import { ApplicationSummary } from '../../core/models/application.model';
@@ -28,6 +29,8 @@ export class AdminComponent implements OnInit {
   readonly reviewers    = signal<User[]>([]);
   readonly saving       = signal<string | null>(null);
 
+  private readonly filterValues = signal({ search: '', status: '', reviewer: '' });
+
   readonly filterForm = this.fb.nonNullable.group({
     search:   [''],
     status:   [''],
@@ -35,7 +38,7 @@ export class AdminComponent implements OnInit {
   });
 
   readonly filtered = computed(() => {
-    const { search, status, reviewer } = this.filterForm.getRawValue();
+    const { search, status, reviewer } = this.filterValues();
     return this.applications().filter((app) => {
       const matchSearch = !search ||
         app.merchantName.toLowerCase().includes(search.toLowerCase()) ||
@@ -59,6 +62,18 @@ export class AdminComponent implements OnInit {
     };
   });
 
+  constructor() {
+    this.filterForm.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((v) =>
+        this.filterValues.set({
+          search:   v.search   ?? '',
+          status:   v.status   ?? '',
+          reviewer: v.reviewer ?? '',
+        })
+      );
+  }
+
   ngOnInit(): void {
     forkJoin({
       applications: this.api.getAllApplicationsUnpaged(),
@@ -71,8 +86,6 @@ export class AdminComponent implements OnInit {
       },
       error: () => this.loadState.set('error'),
     });
-
-    this.filterForm.valueChanges.subscribe(() => {});
   }
 
   assignReviewer(applicationId: string, reviewerId: string): void {

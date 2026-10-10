@@ -98,6 +98,26 @@ export class ApplicationApiService {
     return this.updateApplication(id, { status });
   }
 
+  assignReviewer(applicationId: string, reviewerId: string | null): Observable<MerchantApplication> {
+    return this.updateApplication(applicationId, {
+      assignedReviewer: reviewerId ?? undefined,
+      status: reviewerId ? 'UNDER_REVIEW' : 'SUBMITTED',
+    });
+  }
+
+  getAllApplicationsUnpaged(): Observable<ApplicationSummary[]> {
+    const summaries: ApplicationSummary[] = MOCK_APPLICATIONS.map((app) => ({
+      id: app.id,
+      status: app.status,
+      merchantName: app.businessInfo.legalName,
+      assignedReviewer: app.assignedReviewer,
+      createdBy: app.createdBy,
+      createdAt: app.createdAt,
+      updatedAt: app.updatedAt,
+    }));
+    return of(summaries).pipe(delay(300));
+  }
+
   private getSortValue(app: MerchantApplication, field: string): string {
     switch (field) {
       case 'merchantName': return app.businessInfo.legalName;

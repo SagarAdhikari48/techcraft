@@ -1,7 +1,3 @@
-/**
- * Generic server-side pagination wrapper.
- * All list API responses use this shape.
- */
 export interface PaginatedResponse<T> {
   data: T[];
   total: number;

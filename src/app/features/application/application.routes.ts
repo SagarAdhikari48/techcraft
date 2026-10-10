@@ -1,11 +1,5 @@
 import { Routes } from '@angular/router';
 
-/**
- * Merchant Application feature routes.
- * - /applications       → list (redirects to dashboard)
- * - /applications/new   → multi-step wizard (Phase 4)
- * - /applications/:id   → detail + review (Phase 6)
- */
 export const applicationRoutes: Routes = [
   {
     path: '',

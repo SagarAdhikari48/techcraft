@@ -1,9 +1,3 @@
-/**
- * User roles available in the merchant payments portal.
- * - SALES: creates and edits merchant applications
- * - REVIEWER: reviews assigned applications and records risk decisions
- * - ADMIN: views all applications and manages reviewer assignments
- */
 export type UserRole = 'SALES' | 'REVIEWER' | 'ADMIN';
 
 export interface User {
@@ -17,7 +11,7 @@ export interface User {
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
-  expiresIn: number; // seconds
+  expiresIn: number;
 }
 
 export interface AuthState {

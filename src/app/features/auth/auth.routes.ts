@@ -1,9 +1,5 @@
 import { Routes } from '@angular/router';
 
-/**
- * Auth feature routes.
- * Login page will be scaffolded in Phase 1.2.
- */
 export const authRoutes: Routes = [
   {
     path: 'login',

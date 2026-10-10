@@ -1,8 +1,3 @@
-import { User } from './user.model';
-
-/**
- * Status lifecycle of a merchant application.
- */
 export type ApplicationStatus =
   | 'DRAFT'
   | 'SUBMITTED'
@@ -20,14 +15,12 @@ export type BusinessType =
 
 export type RiskDecision = 'APPROVE' | 'REJECT' | 'HOLD';
 
-// ─── Sub-models ───────────────────────────────────────────────────────────────
-
 export interface BusinessInfo {
   legalName: string;
   tradeName?: string;
   businessType: BusinessType;
-  taxId: string; // sensitive — masked by default
-  incorporationDate: string; // ISO date
+  taxId: string;
+  incorporationDate: string;
   website?: string;
   description: string;
 }
@@ -49,8 +42,8 @@ export interface ContactInfo {
 
 export interface BankingInfo {
   bankName: string;
-  accountNumber: string; // sensitive — masked by default
-  routingNumber: string; // sensitive — masked by default
+  accountNumber: string;
+  routingNumber: string;
   monthlyVolume: number;
   averageTicket: number;
 }
@@ -64,13 +57,11 @@ export interface RiskHistoryEntry {
   createdAt: string;
 }
 
-// ─── Root Application model ──────────────────────────────────────────────────
-
 export interface MerchantApplication {
   id: string;
   status: ApplicationStatus;
-  createdBy: string; // User ID
-  assignedReviewer?: string; // User ID
+  createdBy: string;
+  assignedReviewer?: string;
   businessInfo: BusinessInfo;
   contactInfo: ContactInfo;
   bankingInfo: BankingInfo;
@@ -78,8 +69,6 @@ export interface MerchantApplication {
   createdAt: string;
   updatedAt: string;
 }
-
-// ─── Paginated response wrapper ───────────────────────────────────────────────
 
 export interface ApplicationSummary {
   id: string;

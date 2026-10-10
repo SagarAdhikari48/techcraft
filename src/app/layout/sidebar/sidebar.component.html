@@ -1,0 +1,44 @@
+<aside class="sidebar" [class.sidebar--collapsed]="collapsed()" aria-label="Main navigation">
+
+  <div class="sidebar__brand" aria-label="TechCraft Portal">
+    <i class="bi bi-credit-card-2-front-fill sidebar__brand-icon" aria-hidden="true"></i>
+    @if (!collapsed()) {
+      <span class="sidebar__brand-name">TechCraft</span>
+    }
+  </div>
+
+  <nav class="sidebar__nav">
+    <ul class="sidebar__list" role="list">
+      @for (link of navLinks(); track link.route) {
+        <li class="sidebar__item">
+          <a
+            class="sidebar__link"
+            [routerLink]="link.route"
+            routerLinkActive="is-active"
+            [routerLinkActiveOptions]="{ exact: link.exact ?? false }"
+            (click)="closeMobile.emit()"
+            [attr.aria-label]="link.label"
+          >
+            <i class="bi sidebar__link-icon" [class]="link.icon" aria-hidden="true"></i>
+            @if (!collapsed()) {
+              <span class="sidebar__link-label">{{ link.label }}</span>
+            }
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  @if (!collapsed() && user()) {
+    <div class="sidebar__user" aria-label="Logged in user">
+      <div class="sidebar__user-avatar" aria-hidden="true">
+        {{ user()!.name.charAt(0).toUpperCase() }}
+      </div>
+      <div class="sidebar__user-info">
+        <span class="sidebar__user-name">{{ user()!.name }}</span>
+        <span class="sidebar__user-role">{{ user()!.role }}</span>
+      </div>
+    </div>
+  }
+
+</aside>

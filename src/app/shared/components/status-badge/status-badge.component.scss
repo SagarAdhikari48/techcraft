@@ -1,0 +1,17 @@
+.status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+
+  &.badge-draft     { background: #e9ecef; color: #495057; }
+  &.badge-submitted { background: #cfe2ff; color: #084298; }
+  &.badge-review    { background: #fff3cd; color: #664d03; }
+  &.badge-approved  { background: #d1e7dd; color: #0a3622; }
+  &.badge-rejected  { background: #f8d7da; color: #58151c; }
+  &.badge-hold      { background: #fde8d8; color: #7c3f00; }
+}

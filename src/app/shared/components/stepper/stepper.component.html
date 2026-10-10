@@ -1,0 +1,25 @@
+<nav class="stepper" aria-label="Application wizard steps">
+  <ol class="stepper__list" role="list">
+    @for (step of steps(); track step.id) {
+      <li
+        class="stepper__item"
+        [class.is-active]="step.index === currentIndex()"
+        [class.is-done]="step.index < currentIndex()"
+        [attr.aria-current]="step.index === currentIndex() ? 'step' : null"
+      >
+        <span class="stepper__indicator" aria-hidden="true">
+          @if (step.index < currentIndex()) {
+            <i class="bi bi-check-lg"></i>
+          } @else {
+            {{ step.index + 1 }}
+          }
+        </span>
+        <span class="stepper__label">{{ step.label }}</span>
+      </li>
+
+      @if (step.index < steps().length - 1) {
+        <li class="stepper__connector" aria-hidden="true"></li>
+      }
+    }
+  </ol>
+</nav>

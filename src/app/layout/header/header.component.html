@@ -1,0 +1,60 @@
+<header class="app-header" role="banner">
+
+  <div class="app-header__left">
+    <button
+      type="button"
+      class="app-header__toggle"
+      (click)="toggleSidebar.emit()"
+      [attr.aria-label]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+      aria-controls="app-sidebar"
+    >
+      <i class="bi" [class.bi-layout-sidebar]="sidebarCollapsed()" [class.bi-layout-sidebar-inset]="!sidebarCollapsed()" aria-hidden="true"></i>
+    </button>
+
+    <h1 class="app-header__title">{{ getPageTitle() }}</h1>
+  </div>
+
+  <div class="app-header__right">
+    @if (user()) {
+      <div class="dropdown">
+        <button
+          type="button"
+          class="app-header__user-btn dropdown-toggle"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          [attr.aria-label]="'User menu for ' + user()!.name"
+        >
+          <div class="app-header__avatar" aria-hidden="true">
+            {{ user()!.name.charAt(0).toUpperCase() }}
+          </div>
+          <div class="app-header__user-info d-none d-md-flex">
+            <span class="app-header__user-name">{{ user()!.name }}</span>
+            <span class="app-header__user-role">{{ user()!.role }}</span>
+          </div>
+          <i class="bi bi-chevron-down app-header__chevron" aria-hidden="true"></i>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end" role="menu">
+          <li role="none">
+            <div class="dropdown-item-text">
+              <small class="text-muted d-block">Signed in as</small>
+              <strong>{{ user()!.email }}</strong>
+            </div>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+          <li role="none">
+            <button
+              type="button"
+              class="dropdown-item text-danger"
+              (click)="logout()"
+              role="menuitem"
+            >
+              <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Sign out
+            </button>
+          </li>
+        </ul>
+      </div>
+    }
+  </div>
+
+</header>

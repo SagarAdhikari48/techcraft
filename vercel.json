@@ -1,23 +1,11 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/techcraft-portal/browser",
+  "outputDirectory": "dist/techcraft-portal",
   "installCommand": "npm install",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
-    {
-      "source": "/styles-:hash.css",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
-    },
-    {
-      "source": "/:path*.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
-    },
     {
       "source": "/(.*)",
       "headers": [

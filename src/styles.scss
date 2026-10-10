@@ -1,8 +1,30 @@
-@use 'styles/variables' as *;
-@use 'bootstrap/scss/bootstrap';
+// ─── Bootstrap variable overrides (must come before bootstrap import) ─────────
+@use 'styles/variables' as vars;
+
+// ─── Bootstrap ────────────────────────────────────────────────────────────────
+@use 'bootstrap/scss/bootstrap' with (
+  $primary:             vars.$primary,
+  $secondary:           vars.$secondary,
+  $success:             vars.$success,
+  $danger:              vars.$danger,
+  $warning:             vars.$warning,
+  $info:                vars.$info,
+  $font-family-sans-serif: vars.$font-family-sans-serif,
+  $font-size-base:      vars.$font-size-base,
+  $border-radius:       vars.$border-radius,
+  $border-radius-lg:    vars.$border-radius-lg,
+  $border-radius-sm:    vars.$border-radius-sm,
+  $box-shadow:          vars.$box-shadow,
+  $box-shadow-lg:       vars.$box-shadow-lg
+);
+
+// ─── Bootstrap Icons ──────────────────────────────────────────────────────────
 @use 'bootstrap-icons/font/bootstrap-icons';
+
+// ─── Shared mixins ────────────────────────────────────────────────────────────
 @use 'styles/mixins' as *;
 
+// ─── Global base ──────────────────────────────────────────────────────────────
 *,
 *::before,
 *::after {
@@ -19,7 +41,7 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid $primary;
+  outline: 2px solid vars.$primary;
   outline-offset: 2px;
 }
 

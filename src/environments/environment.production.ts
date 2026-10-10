@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://techcraft-mock-api.onrender.com/api'
+  apiUrl: 'https://techcraft-merchant-payments-portal.onrender.com/api'
 };

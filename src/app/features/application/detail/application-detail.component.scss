@@ -1,4 +1,4 @@
-@use 'styles/variables' as v;
+@import 'styles/variables';
 
 :host {
   display: block;
@@ -127,7 +127,7 @@
     word-break: break-word;
 
     a {
-      color: v.$primary;
+      color: $primary;
       text-decoration: none;
       &:hover { text-decoration: underline; }
     }
@@ -150,7 +150,7 @@
     background: none;
     border: none;
     padding: 0;
-    color: v.$primary;
+    color: $primary;
     cursor: pointer;
     font-size: 0.875rem;
     line-height: 1;

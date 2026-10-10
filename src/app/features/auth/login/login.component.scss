@@ -1,4 +1,4 @@
-@use 'styles/variables' as v;
+@import 'styles/variables';
 
 :host {
   display: block;
@@ -30,7 +30,7 @@
   &__logo {
     width: 56px;
     height: 56px;
-    background: v.$primary;
+    background: $primary;
     border-radius: 12px;
     display: inline-flex;
     align-items: center;

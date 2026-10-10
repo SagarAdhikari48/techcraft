@@ -1,4 +1,4 @@
-@use 'styles/variables' as v;
+@import 'styles/variables';
 
 :host { display: block; }
 
@@ -38,11 +38,11 @@
 
     &:hover {
       background: #f0f4ff;
-      color: v.$primary;
+      color: $primary;
     }
 
     &:focus-visible {
-      outline: 2px solid v.$primary;
+      outline: 2px solid $primary;
       outline-offset: 2px;
     }
   }
@@ -88,7 +88,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid v.$primary;
+      outline: 2px solid $primary;
       outline-offset: 2px;
     }
 
@@ -99,7 +99,7 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: v.$primary;
+    background: $primary;
     color: #fff;
     font-size: 0.8125rem;
     font-weight: 700;

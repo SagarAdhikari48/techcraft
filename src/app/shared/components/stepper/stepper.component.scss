@@ -1,4 +1,4 @@
-@use 'styles/variables' as v;
+@import 'styles/variables';
 
 .stepper {
   padding: 1.5rem 2rem;
@@ -30,7 +30,7 @@
     transition: background-color 0.3s;
 
     .stepper__item.is-done ~ & {
-      background: v.$primary;
+      background: $primary;
     }
   }
 
@@ -50,14 +50,14 @@
     flex-shrink: 0;
 
     .is-active & {
-      border-color: v.$primary;
-      background: v.$primary;
+      border-color: $primary;
+      background: $primary;
       color: #fff;
     }
 
     .is-done & {
-      border-color: v.$primary;
-      background: v.$primary;
+      border-color: $primary;
+      background: $primary;
       color: #fff;
     }
   }
@@ -69,12 +69,12 @@
     white-space: nowrap;
 
     .is-active & {
-      color: v.$primary;
+      color: $primary;
       font-weight: 600;
     }
 
     .is-done & {
-      color: v.$primary;
+      color: $primary;
     }
   }
 }

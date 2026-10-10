@@ -1,4 +1,4 @@
-@use 'styles/variables' as v;
+@import 'styles/variables';
 
 :host {
   display: block;
@@ -100,7 +100,7 @@
       &:hover { background-color: #f0f4ff; }
 
       &:focus {
-        outline: 2px solid v.$primary;
+        outline: 2px solid $primary;
         outline-offset: -2px;
         background-color: #f0f4ff;
       }

@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { StepperComponent } from '../../../shared/components/stepper/stepper.component';
@@ -23,7 +24,7 @@ const BUSINESS_TYPES = [
 @Component({
   selector: 'app-application-wizard',
   standalone: true,
-  imports: [ReactiveFormsModule, StepperComponent],
+  imports: [ReactiveFormsModule, StepperComponent, DecimalPipe],
   templateUrl: './application-wizard.component.html',
   styleUrl: './application-wizard.component.scss',
 })

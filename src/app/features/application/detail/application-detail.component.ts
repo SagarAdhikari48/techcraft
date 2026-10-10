@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 import { ApplicationApiService } from '../../../../mock-api/application-api.service';
 import { PermissionService } from '../../../core/permissions/permission.service';
 import { MerchantApplication, RiskDecision } from '../../../core/models/application.model';
@@ -12,7 +13,7 @@ type LoadState = 'loading' | 'success' | 'error';
 @Component({
   selector: 'app-application-detail',
   standalone: true,
-  imports: [ReactiveFormsModule, StatusBadgeComponent, MaskPipe],
+  imports: [ReactiveFormsModule, StatusBadgeComponent, MaskPipe, DecimalPipe],
   templateUrl: './application-detail.component.html',
   styleUrl: './application-detail.component.scss',
 })

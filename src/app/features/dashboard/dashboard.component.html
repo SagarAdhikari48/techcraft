@@ -1,3 +1,166 @@
-<div class="container-fluid py-4">
-  <h2>Dashboard</h2>
+<div class="dashboard">
+
+  <div class="dashboard__header">
+    <div>
+      <h1 class="dashboard__title">Applications</h1>
+      <p class="dashboard__subtitle">
+        @if (canViewAll()) {
+          All merchant applications
+        } @else {
+          Your merchant applications
+        }
+      </p>
+    </div>
+    @if (canCreate()) {
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="createApplication()"
+        aria-label="Create new merchant application"
+      >
+        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>
+        New Application
+      </button>
+    }
+  </div>
+
+  <div class="dashboard__filters" [formGroup]="filterForm">
+    <div class="dashboard__search">
+      <i class="bi bi-search dashboard__search-icon" aria-hidden="true"></i>
+      <input
+        type="search"
+        class="form-control dashboard__search-input"
+        formControlName="search"
+        placeholder="Search by merchant name or ID…"
+        aria-label="Search applications"
+      />
+    </div>
+    <select
+      class="form-select dashboard__status-select"
+      formControlName="status"
+      aria-label="Filter by status"
+    >
+      @for (opt of statusOptions; track opt.value) {
+        <option [value]="opt.value">{{ opt.label }}</option>
+      }
+    </select>
+  </div>
+
+  @if (loadState() === 'loading') {
+    <div class="dashboard__state" role="status" aria-live="polite" aria-label="Loading applications">
+      <div class="spinner-border text-primary" aria-hidden="true"></div>
+      <p class="dashboard__state-text">Loading applications…</p>
+    </div>
+  }
+
+  @if (loadState() === 'error') {
+    <div class="dashboard__state" role="alert">
+      <i class="bi bi-exclamation-circle text-danger fs-2" aria-hidden="true"></i>
+      <p class="dashboard__state-text text-danger">Failed to load applications.</p>
+      <button type="button" class="btn btn-outline-danger btn-sm" (click)="retry()">
+        <i class="bi bi-arrow-clockwise me-1" aria-hidden="true"></i>Retry
+      </button>
+    </div>
+  }
+
+  @if (loadState() === 'success') {
+
+    @if (applications().length === 0) {
+      <div class="dashboard__state" role="status">
+        <i class="bi bi-inbox fs-2 text-muted" aria-hidden="true"></i>
+        <p class="dashboard__state-text text-muted">No applications found.</p>
+        @if (canCreate()) {
+          <button type="button" class="btn btn-primary btn-sm" (click)="createApplication()">
+            Create your first application
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="table dashboard__table" aria-label="Merchant applications">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Merchant</th>
+              <th scope="col">Status</th>
+              <th scope="col">Last Updated</th>
+              <th scope="col">Created</th>
+              <th scope="col" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (app of applications(); track trackById($index, app)) {
+              <tr class="dashboard__row" (click)="viewApplication(app.id)" tabindex="0"
+                  (keydown.enter)="viewApplication(app.id)" role="button"
+                  [attr.aria-label]="'View application for ' + app.merchantName">
+                <td class="dashboard__id text-muted">{{ app.id }}</td>
+                <td class="fw-semibold">{{ app.merchantName }}</td>
+                <td><app-status-badge [status]="app.status" /></td>
+                <td class="text-muted">{{ formatDate(app.updatedAt) }}</td>
+                <td class="text-muted">{{ formatDate(app.createdAt) }}</td>
+                <td class="text-end">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    (click)="$event.stopPropagation(); viewApplication(app.id)"
+                    [attr.aria-label]="'View details for ' + app.merchantName"
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dashboard__footer">
+        <p class="dashboard__count text-muted" aria-live="polite">
+          Showing {{ applications().length }} of {{ totalRecords() }} applications
+        </p>
+
+        @if (totalPages() > 1) {
+          <nav aria-label="Application list pagination">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="currentPage() === 1">
+                <button
+                  class="page-link"
+                  (click)="goToPage(currentPage() - 1)"
+                  [disabled]="currentPage() === 1"
+                  aria-label="Previous page"
+                >
+                  <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                </button>
+              </li>
+
+              @for (page of pages(); track page) {
+                <li class="page-item" [class.active]="page === currentPage()">
+                  <button
+                    class="page-link"
+                    (click)="goToPage(page)"
+                    [attr.aria-current]="page === currentPage() ? 'page' : null"
+                    [attr.aria-label]="'Page ' + page"
+                  >
+                    {{ page }}
+                  </button>
+                </li>
+              }
+
+              <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+                <button
+                  class="page-link"
+                  (click)="goToPage(currentPage() + 1)"
+                  [disabled]="currentPage() === totalPages()"
+                  aria-label="Next page"
+                >
+                  <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
+              </li>
+            </ul>
+          </nav>
+        }
+      </div>
+    }
+  }
+
 </div>

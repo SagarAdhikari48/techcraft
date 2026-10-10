@@ -12,7 +12,7 @@ export const MOCK_CREDENTIALS: MockCredential[] = [
     password: 'password',
     user: {
       id: 'usr-001',
-      name: 'Alex Turner',
+      name: 'Suman Adhikari',
       email: 'sales@techcraft.dev',
       role: 'SALES',
     },
@@ -22,7 +22,7 @@ export const MOCK_CREDENTIALS: MockCredential[] = [
     password: 'password',
     user: {
       id: 'usr-002',
-      name: 'Jordan Lee',
+      name: 'Rajan Shrestha',
       email: 'reviewer@techcraft.dev',
       role: 'REVIEWER',
     },
@@ -32,7 +32,7 @@ export const MOCK_CREDENTIALS: MockCredential[] = [
     password: 'password',
     user: {
       id: 'usr-003',
-      name: 'Morgan Blake',
+      name: 'Priya Thapa',
       email: 'admin@techcraft.dev',
       role: 'ADMIN',
     },

@@ -61,6 +61,20 @@ $transition:      0.25s ease;
     flex: 1;
     overflow-y: auto;
     background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+
+    // router-outlet renders as inline by default — make it block
+    router-outlet {
+      display: none;
+    }
+
+    // every routed component should fill available height
+    router-outlet + * {
+      flex: 1;
+      display: block;
+      min-height: 0;
+    }
 
     &:focus { outline: none; }
   }

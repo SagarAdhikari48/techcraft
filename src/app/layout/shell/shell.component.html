@@ -1,0 +1,38 @@
+<div class="shell" [class.shell--collapsed]="sidebarCollapsed()">
+
+  <!-- Mobile overlay backdrop -->
+  @if (mobileOpen()) {
+    <div
+      class="shell__backdrop"
+      (click)="closeMobile()"
+      aria-hidden="true"
+    ></div>
+  }
+
+  <!-- Sidebar -->
+  <div
+    id="app-sidebar"
+    class="shell__sidebar"
+    [class.shell__sidebar--open]="mobileOpen()"
+    role="complementary"
+    aria-label="Application sidebar"
+  >
+    <app-sidebar
+      [collapsed]="sidebarCollapsed()"
+      (closeMobile)="closeMobile()"
+    />
+  </div>
+
+  <!-- Main area -->
+  <div class="shell__main">
+    <app-header
+      [sidebarCollapsed]="sidebarCollapsed()"
+      (toggleSidebar)="toggleSidebar()"
+    />
+
+    <main class="shell__content" id="main-content" tabindex="-1">
+      <router-outlet />
+    </main>
+  </div>
+
+</div>

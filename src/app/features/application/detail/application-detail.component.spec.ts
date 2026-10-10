@@ -154,7 +154,7 @@ describe('ApplicationDetailComponent', () => {
       const { fixture } = setup({ canReveal: false });
       tick(400);
       fixture.detectChanges();
-      const btns = fixture.nativeElement.querySelectorAll('.detail__reveal-btn');
+      const btns = fixture.nativeElement.querySelectorAll('.detail__reveal');
       expect(btns.length).toBe(0);
     }));
 
@@ -162,7 +162,7 @@ describe('ApplicationDetailComponent', () => {
       const { fixture } = setup({ canReveal: true });
       tick(400);
       fixture.detectChanges();
-      const btns = fixture.nativeElement.querySelectorAll('.detail__reveal-btn');
+      const btns = fixture.nativeElement.querySelectorAll('.detail__reveal');
       expect(btns.length).toBeGreaterThan(0);
     }));
   });
@@ -172,7 +172,7 @@ describe('ApplicationDetailComponent', () => {
       const { fixture } = setup({ canReview: true });
       tick(400);
       fixture.detectChanges();
-      const form = fixture.nativeElement.querySelector('.detail__review-card');
+      const form = fixture.nativeElement.querySelector('.detail__review-panel');
       expect(form).toBeTruthy();
     }));
 
@@ -180,7 +180,7 @@ describe('ApplicationDetailComponent', () => {
       const { fixture } = setup({ canReview: false });
       tick(400);
       fixture.detectChanges();
-      const form = fixture.nativeElement.querySelector('.detail__review-card');
+      const form = fixture.nativeElement.querySelector('.detail__review-panel');
       expect(form).toBeNull();
     }));
 

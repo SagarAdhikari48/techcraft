@@ -1,3 +1,208 @@
-<div class="container py-4">
-  <h2>Application Detail</h2>
+<div class="detail">
+
+  <div class="detail__header">
+    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="goBack()" aria-label="Back to dashboard">
+      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Back
+    </button>
+    @if (loadState() === 'success' && application()) {
+      <div class="detail__header-meta">
+        <h1 class="detail__title">{{ application()!.businessInfo.legalName }}</h1>
+        <div class="detail__meta-row">
+          <span class="text-muted small">{{ application()!.id }}</span>
+          <app-status-badge [status]="application()!.status" />
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (loadState() === 'loading') {
+    <div class="detail__state" role="status" aria-live="polite">
+      <div class="spinner-border text-primary" aria-hidden="true"></div>
+      <p class="mt-2 text-muted">Loading application…</p>
+    </div>
+  }
+
+  @if (loadState() === 'error') {
+    <div class="detail__state" role="alert">
+      <i class="bi bi-exclamation-circle text-danger fs-2" aria-hidden="true"></i>
+      <p class="text-danger mt-2">Application not found or failed to load.</p>
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="goBack()">Back to Dashboard</button>
+    </div>
+  }
+
+  @if (loadState() === 'success' && application(); as app) {
+    <div class="detail__body">
+
+      <div class="detail__sections">
+
+        <!-- Business Info -->
+        <section class="detail__card" aria-labelledby="biz-heading">
+          <h2 id="biz-heading" class="detail__card-title">
+            <i class="bi bi-building me-2" aria-hidden="true"></i>Business Information
+          </h2>
+          <dl class="detail__dl">
+            <dt>Legal Name</dt>    <dd>{{ app.businessInfo.legalName }}</dd>
+            <dt>Trade Name</dt>    <dd>{{ app.businessInfo.tradeName || '—' }}</dd>
+            <dt>Business Type</dt> <dd>{{ app.businessInfo.businessType.replace('_', ' ') }}</dd>
+            <dt>Tax ID (EIN)</dt>
+            <dd class="detail__sensitive-field">
+              <span>{{ app.businessInfo.taxId | mask : isRevealed('taxId') }}</span>
+              @if (canReveal()) {
+                <button type="button" class="btn btn-link btn-sm detail__reveal-btn"
+                  (click)="toggleReveal('taxId')"
+                  [attr.aria-label]="isRevealed('taxId') ? 'Hide Tax ID' : 'Reveal Tax ID'">
+                  <i class="bi" [class.bi-eye]="!isRevealed('taxId')" [class.bi-eye-slash]="isRevealed('taxId')" aria-hidden="true"></i>
+                  {{ isRevealed('taxId') ? 'Hide' : 'Reveal' }}
+                </button>
+              }
+            </dd>
+            <dt>Incorporated</dt>  <dd>{{ formatDate(app.businessInfo.incorporationDate) }}</dd>
+            <dt>Website</dt>
+            <dd>
+              @if (app.businessInfo.website) {
+                <a [href]="app.businessInfo.website" target="_blank" rel="noopener noreferrer">{{ app.businessInfo.website }}</a>
+              } @else { — }
+            </dd>
+          </dl>
+          <p class="detail__desc">{{ app.businessInfo.description }}</p>
+        </section>
+
+        <!-- Contact Info -->
+        <section class="detail__card" aria-labelledby="contact-heading">
+          <h2 id="contact-heading" class="detail__card-title">
+            <i class="bi bi-person me-2" aria-hidden="true"></i>Contact Information
+          </h2>
+          <dl class="detail__dl">
+            <dt>Owner</dt>  <dd>{{ app.contactInfo.ownerName }}</dd>
+            <dt>Email</dt>  <dd><a [href]="'mailto:' + app.contactInfo.ownerEmail">{{ app.contactInfo.ownerEmail }}</a></dd>
+            <dt>Phone</dt>  <dd>{{ app.contactInfo.ownerPhone }}</dd>
+            <dt>Address</dt>
+            <dd>
+              {{ app.contactInfo.address.street }},
+              {{ app.contactInfo.address.city }},
+              {{ app.contactInfo.address.state }}
+              {{ app.contactInfo.address.postalCode }}
+            </dd>
+          </dl>
+        </section>
+
+        <!-- Banking Info -->
+        <section class="detail__card" aria-labelledby="bank-heading">
+          <h2 id="bank-heading" class="detail__card-title">
+            <i class="bi bi-bank me-2" aria-hidden="true"></i>Banking &amp; Financial Details
+          </h2>
+          <dl class="detail__dl">
+            <dt>Bank</dt>           <dd>{{ app.bankingInfo.bankName }}</dd>
+
+            <dt>Account Number</dt>
+            <dd class="detail__sensitive-field">
+              <span>{{ app.bankingInfo.accountNumber | mask : isRevealed('accountNumber') }}</span>
+              @if (canReveal()) {
+                <button type="button" class="btn btn-link btn-sm detail__reveal-btn"
+                  (click)="toggleReveal('accountNumber')"
+                  [attr.aria-label]="isRevealed('accountNumber') ? 'Hide account number' : 'Reveal account number'">
+                  <i class="bi" [class.bi-eye]="!isRevealed('accountNumber')" [class.bi-eye-slash]="isRevealed('accountNumber')" aria-hidden="true"></i>
+                  {{ isRevealed('accountNumber') ? 'Hide' : 'Reveal' }}
+                </button>
+              }
+            </dd>
+
+            <dt>Routing Number</dt>
+            <dd class="detail__sensitive-field">
+              <span>{{ app.bankingInfo.routingNumber | mask : isRevealed('routingNumber') }}</span>
+              @if (canReveal()) {
+                <button type="button" class="btn btn-link btn-sm detail__reveal-btn"
+                  (click)="toggleReveal('routingNumber')"
+                  [attr.aria-label]="isRevealed('routingNumber') ? 'Hide routing number' : 'Reveal routing number'">
+                  <i class="bi" [class.bi-eye]="!isRevealed('routingNumber')" [class.bi-eye-slash]="isRevealed('routingNumber')" aria-hidden="true"></i>
+                  {{ isRevealed('routingNumber') ? 'Hide' : 'Reveal' }}
+                </button>
+              }
+            </dd>
+
+            <dt>Monthly Volume</dt> <dd>${{ app.bankingInfo.monthlyVolume | number }}</dd>
+            <dt>Avg. Transaction</dt> <dd>${{ app.bankingInfo.averageTicket | number }}</dd>
+          </dl>
+        </section>
+
+        <!-- Risk History -->
+        <section class="detail__card" aria-labelledby="history-heading">
+          <h2 id="history-heading" class="detail__card-title">
+            <i class="bi bi-clock-history me-2" aria-hidden="true"></i>Risk History
+          </h2>
+          @if (app.riskHistory.length === 0) {
+            <p class="text-muted fst-italic">No review decisions recorded yet.</p>
+          } @else {
+            <ol class="detail__timeline" reversed>
+              @for (entry of app.riskHistory; track entry.id) {
+                <li class="detail__timeline-item">
+                  <div class="detail__timeline-dot" [class]="decisionClass(entry.decision)" aria-hidden="true"></div>
+                  <div class="detail__timeline-content">
+                    <div class="detail__timeline-header">
+                      <span class="fw-semibold" [class]="decisionClass(entry.decision)">
+                        {{ decisionLabel(entry.decision) }}
+                      </span>
+                      <span class="text-muted small">by {{ entry.reviewerName }} · {{ formatDate(entry.createdAt) }}</span>
+                    </div>
+                    <p class="detail__timeline-notes">{{ entry.notes }}</p>
+                  </div>
+                </li>
+              }
+            </ol>
+          }
+        </section>
+
+        <!-- Reviewer Controls — hidden from SALES -->
+        @if (canReview()) {
+          <section class="detail__card detail__review-card" aria-labelledby="review-heading">
+            <h2 id="review-heading" class="detail__card-title">
+              <i class="bi bi-clipboard-check me-2" aria-hidden="true"></i>Record Decision
+            </h2>
+
+            <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" novalidate>
+              <div class="mb-3">
+                <label class="form-label">Decision <span class="text-danger">*</span></label>
+                <div class="detail__decision-buttons" role="group" aria-label="Select review decision">
+                  @for (opt of [{ v: 'APPROVE', label: 'Approve', cls: 'btn-success' }, { v: 'REJECT', label: 'Reject', cls: 'btn-danger' }, { v: 'HOLD', label: 'Hold', cls: 'btn-warning' }]; track opt.v) {
+                    <input type="radio" class="btn-check" formControlName="decision"
+                      [value]="opt.v" [id]="'decision-' + opt.v" autocomplete="off" />
+                    <label class="btn" [class]="'btn-outline-' + opt.cls.split('-')[1]" [for]="'decision-' + opt.v">
+                      {{ opt.label }}
+                    </label>
+                  }
+                </div>
+                @if (reviewForm.controls.decision.invalid && reviewForm.controls.decision.touched) {
+                  <div class="text-danger small mt-1">Please select a decision.</div>
+                }
+              </div>
+
+              <div class="mb-3">
+                <label for="notes" class="form-label">Notes <span class="text-danger">*</span></label>
+                <textarea id="notes" class="form-control" rows="3"
+                  formControlName="notes"
+                  [class.is-invalid]="reviewForm.controls.notes.invalid && reviewForm.controls.notes.touched"
+                  placeholder="Provide a reason for your decision (min. 10 characters)…"></textarea>
+                @if (reviewForm.controls.notes.invalid && reviewForm.controls.notes.touched) {
+                  <div class="invalid-feedback">
+                    @if (reviewForm.controls.notes.errors?.['required']) { Notes are required. }
+                    @else { Minimum 10 characters required. }
+                  </div>
+                }
+              </div>
+
+              <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+                @if (submitting()) {
+                  <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Submitting…
+                } @else {
+                  Submit Decision
+                }
+              </button>
+            </form>
+          </section>
+        }
+
+      </div>
+    </div>
+  }
+
 </div>

@@ -1,0 +1,55 @@
+// ─── Responsive Breakpoint Mixins ─────────────────────────────────────────────
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == 'sm' {
+    @media (min-width: 576px) { @content; }
+  } @else if $breakpoint == 'md' {
+    @media (min-width: 768px) { @content; }
+  } @else if $breakpoint == 'lg' {
+    @media (min-width: 992px) { @content; }
+  } @else if $breakpoint == 'xl' {
+    @media (min-width: 1200px) { @content; }
+  }
+}
+
+// ─── Flexbox Utility ──────────────────────────────────────────────────────────
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// ─── Truncate Text ────────────────────────────────────────────────────────────
+@mixin truncate($max-width: 100%) {
+  max-width: $max-width;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ─── Card Style ───────────────────────────────────────────────────────────────
+@mixin card-base {
+  background: #fff;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
+  padding: 1.5rem;
+}
+
+// ─── Status Badge Colors ──────────────────────────────────────────────────────
+@mixin status-badge($bg, $color: #fff) {
+  background-color: $bg;
+  color: $color;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}

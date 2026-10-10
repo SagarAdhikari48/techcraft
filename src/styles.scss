@@ -1,1 +1,45 @@
-/* You can add global styles to this file, and also import other style files */
+// ─── Variable Overrides (must come before Bootstrap import) ──────────────────
+@import 'styles/variables';
+
+// ─── Bootstrap 5 ─────────────────────────────────────────────────────────────
+@import 'bootstrap/scss/bootstrap';
+
+// ─── Bootstrap Icons ─────────────────────────────────────────────────────────
+@import 'bootstrap-icons/font/bootstrap-icons';
+
+// ─── Shared Mixins ────────────────────────────────────────────────────────────
+@import 'styles/mixins';
+
+// ─── Global Base Styles ───────────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+// ─── Focus visible for accessibility ─────────────────────────────────────────
+:focus-visible {
+  outline: 2px solid $primary;
+  outline-offset: 2px;
+}
+
+// ─── Scrollbar Styling ────────────────────────────────────────────────────────
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}

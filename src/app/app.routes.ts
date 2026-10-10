@@ -9,34 +9,43 @@ export const routes: Routes = [
     redirectTo: 'dashboard',
     pathMatch: 'full',
   },
+
   {
     path: 'auth',
     canActivate: [guestGuard],
     loadChildren: () =>
       import('./features/auth/auth.routes').then((m) => m.authRoutes),
   },
+
   {
-    path: 'dashboard',
+    path: '',
     canActivate: [authGuard],
-    loadChildren: () =>
-      import('./features/dashboard/dashboard.routes').then(
-        (m) => m.dashboardRoutes
-      ),
+    loadComponent: () =>
+      import('./layout/shell/shell.component').then((m) => m.ShellComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadChildren: () =>
+          import('./features/dashboard/dashboard.routes').then(
+            (m) => m.dashboardRoutes
+          ),
+      },
+      {
+        path: 'applications',
+        loadChildren: () =>
+          import('./features/application/application.routes').then(
+            (m) => m.applicationRoutes
+          ),
+      },
+      {
+        path: 'admin',
+        canActivate: [roleGuard('ADMIN')],
+        loadChildren: () =>
+          import('./features/admin/admin.routes').then((m) => m.adminRoutes),
+      },
+    ],
   },
-  {
-    path: 'applications',
-    canActivate: [authGuard],
-    loadChildren: () =>
-      import('./features/application/application.routes').then(
-        (m) => m.applicationRoutes
-      ),
-  },
-  {
-    path: 'admin',
-    canActivate: [authGuard, roleGuard('ADMIN')],
-    loadChildren: () =>
-      import('./features/admin/admin.routes').then((m) => m.adminRoutes),
-  },
+
   {
     path: '**',
     redirectTo: 'dashboard',

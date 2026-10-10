@@ -113,7 +113,19 @@ src/
 - Draft auto-save to `localStorage` via RxJS `debounceTime(800ms)`
 - Draft restored on re-open; Discard Draft button clears state
 
-### Application Detail
+### Admin Panel
+- Status count cards (total, submitted, under review, approved, rejected, on hold)
+- All-applications table with per-row reviewer assignment dropdown
+- Client-side search, status and reviewer filters via Signal bridge
+- `forkJoin` loads applications and reviewers in parallel
+- Saving spinner per row during assignment API call
+
+### `HasPermissionDirective`
+- Structural directive: `*appHasPermission="'action:name'"`
+- Optional `appHasPermissionElse` template ref for fallback content
+- Backed by `PermissionService.can()` — reactive to role changes
+
+
 - Sectioned view: business, contact, banking, risk history timeline
 - Sensitive fields (taxId, account number, routing number) masked by default using `MaskPipe`
 - REVIEWER and ADMIN can reveal individual fields via toggle
@@ -165,11 +177,14 @@ npm run test:coverage # coverage report
 | `dashboard.component.spec.ts` | 15 |
 | `application-wizard.component.spec.ts` | 16 |
 | `application-detail.component.spec.ts` | 16 |
+| `admin.component.spec.ts` | 16 |
+| `application.validators.spec.ts` | 29 |
+| `has-permission.directive.spec.ts` | 4 |
 | `status-badge.component.spec.ts` | 6 |
 | `stepper.component.spec.ts` | 5 |
 | `mask.pipe.spec.ts` | 6 |
 | `app.spec.ts` | 2 |
-| **Total** | **109** |
+| **Total** | **159** |
 
 ---
 

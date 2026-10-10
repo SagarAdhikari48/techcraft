@@ -1,3 +1,4 @@
 {
+  "/api/*": "/$1",
   "/auth/refresh": "/users"
 }

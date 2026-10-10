@@ -2,26 +2,25 @@
 
 :host {
   display: block;
-  height: 100%;
+  width: 100%;
 }
 
 .dashboard {
   padding: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
-  min-height: 100%;
 
   &__header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
     flex-wrap: wrap;
   }
 
   &__title {
-    font-size: 1.375rem;
+    font-size: 1.25rem;
     font-weight: 700;
     margin: 0 0 0.25rem;
     color: #1e2a3a;
@@ -36,14 +35,14 @@
   &__filters {
     display: flex;
     gap: 0.75rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
     flex-wrap: wrap;
   }
 
   &__search {
     position: relative;
     flex: 1;
-    min-width: 200px;
+    min-width: 180px;
   }
 
   &__search-icon {
@@ -61,7 +60,7 @@
 
   &__status-select {
     width: auto;
-    min-width: 160px;
+    min-width: 140px;
   }
 
   &__state {
@@ -70,7 +69,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
-    padding: 4rem 1rem;
+    padding: 3rem 1rem;
     text-align: center;
   }
 
@@ -81,9 +80,10 @@
 
   &__table {
     margin-bottom: 0;
+    font-size: 0.875rem;
 
     thead th {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -97,9 +97,7 @@
       cursor: pointer;
       transition: background-color 0.15s;
 
-      &:hover {
-        background-color: #f0f4ff;
-      }
+      &:hover { background-color: #f0f4ff; }
 
       &:focus {
         outline: 2px solid v.$primary;
@@ -108,15 +106,12 @@
       }
     }
 
-    td {
-      vertical-align: middle;
-      font-size: 0.875rem;
-    }
+    td { vertical-align: middle; }
   }
 
   &__id {
     font-family: 'Courier New', monospace;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
   }
 
   &__footer {
@@ -131,5 +126,39 @@
   &__count {
     font-size: 0.875rem;
     margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+
+    &__header { flex-direction: column; align-items: stretch; }
+
+    &__filters { flex-direction: column; }
+
+    &__search { min-width: 100%; }
+
+    &__status-select { width: 100%; }
+
+    .table-responsive { margin: 0 -1rem; padding: 0 1rem; }
+
+    // Hide less important columns on mobile
+    &__table {
+      th:nth-child(4),
+      td:nth-child(4),
+      th:nth-child(5),
+      td:nth-child(5) {
+        display: none;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 0.75rem;
+
+    &__footer { flex-direction: column; align-items: flex-start; }
   }
 }

@@ -15,17 +15,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-}
-
-app-root {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-
-.shell__content > * {
-  min-height: 100%;
+  background-color: #f8f9fa;
 }
 
 :focus-visible {

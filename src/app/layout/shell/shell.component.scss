@@ -13,6 +13,10 @@ $transition:      0.25s ease;
   height: 100vh;
   overflow: hidden;
 
+  &--collapsed .shell__sidebar {
+    width: $sidebar-narrow;
+  }
+
   &__backdrop {
     display: none;
     position: fixed;
@@ -31,10 +35,6 @@ $transition:      0.25s ease;
     transition: width $transition;
     overflow: hidden;
     z-index: 300;
-
-    .shell--collapsed & {
-      width: $sidebar-narrow;
-    }
 
     @media (max-width: 991px) {
       position: fixed;
@@ -58,12 +58,12 @@ $transition:      0.25s ease;
     flex-direction: column;
     min-width: 0;
     overflow: hidden;
+    background: #f8f9fa;
   }
 
   &__content {
     flex: 1;
     overflow-y: auto;
-    background: #f8f9fa;
 
     &:focus { outline: none; }
   }

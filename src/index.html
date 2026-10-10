@@ -1,13 +1,82 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>TechcraftPortal</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <meta charset="utf-8" />
+  <title>TechCraft Portal</title>
+  <base href="/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="TechCraft Merchant Payments Portal — manage merchant applications, reviews and approvals." />
+
+  <!--
+    Content Security Policy
+    ────────────────────────────────────────────────────────────────────────────
+    default-src 'self'
+      All resource types fall back to same-origin only unless overridden below.
+
+    script-src 'self'
+      No inline scripts, no eval(). Angular compiles templates ahead-of-time so
+      no runtime eval is required. Bootstrap JS is bundled by Angular CLI and
+      served from the same origin.
+
+    style-src 'self' 'unsafe-inline'
+      Bootstrap and Angular component styles emit inline <style> blocks at
+      runtime. 'unsafe-inline' is scoped to styles only and is a known
+      trade-off with current Angular/Bootstrap usage. A nonce-based approach
+      can replace this in a server-rendered deployment.
+
+    img-src 'self' data:
+      Allows same-origin images and base64 data URIs (used for avatars /
+      favicon). No external image CDNs are loaded.
+
+    font-src 'self'
+      Bootstrap Icons font files are served from the same origin (bundled by
+      Angular CLI). No external font CDNs.
+
+    connect-src 'self'
+      Restricts XHR / fetch / WebSocket connections to same origin only.
+      Prevents exfiltration of tokens or form data to third-party endpoints.
+
+    frame-ancestors 'none'
+      Prevents this page from being embedded in any iframe — mitigates
+      clickjacking attacks. Equivalent to X-Frame-Options: DENY.
+
+    form-action 'self'
+      Restricts where form submissions may be sent. All forms in this SPA
+      use Angular's reactive forms which submit via fetch, not native POST,
+      but this directive provides defence-in-depth.
+
+    base-uri 'self'
+      Prevents injection of a <base> tag that could redirect relative URLs.
+
+    object-src 'none'
+      Disallows <object>, <embed>, and <applet> — legacy plugin vectors.
+    ────────────────────────────────────────────────────────────────────────────
+    NOTE: In production these directives should be delivered as HTTP response
+    headers (Content-Security-Policy) from the web server rather than a meta
+    tag, as meta CSP does not cover all resource types (e.g. frame-ancestors
+    is ignored in meta tags by the spec).
+  -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data:;
+    font-src 'self';
+    connect-src 'self';
+    frame-ancestors 'none';
+    form-action 'self';
+    base-uri 'self';
+    object-src 'none';
+  " />
+
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
 </head>
 <body>
+  <a class="skip-link visually-hidden-focusable" href="#main-content">Skip to main content</a>
   <app-root></app-root>
 </body>
 </html>

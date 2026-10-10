@@ -23,6 +23,11 @@ app-root {
   height: 100vh;
 }
 
+
+.shell__content > * {
+  min-height: 100%;
+}
+
 :focus-visible {
   outline: 2px solid $primary;
   outline-offset: 2px;

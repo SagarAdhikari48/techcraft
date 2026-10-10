@@ -41,6 +41,9 @@ __screenshots__/
 # Vitest
 /coverage
 
+# Mock server runtime database
+mock-server/db.json
+
 # Environment / secrets — never commit
 .env
 .env.*

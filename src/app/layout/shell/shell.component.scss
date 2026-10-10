@@ -64,6 +64,7 @@ $transition:      0.25s ease;
   &__content {
     flex: 1;
     overflow-y: auto;
+    background: #f8f9fa;
 
     &:focus { outline: none; }
   }

@@ -91,12 +91,14 @@ export class AdminComponent implements OnInit {
   assignReviewer(applicationId: string, reviewerId: string): void {
     this.saving.set(applicationId);
     const id = reviewerId || null;
+    const newStatus = reviewerId ? 'UNDER_REVIEW' as const : 'SUBMITTED' as const;
+
     this.api.assignReviewer(applicationId, id).subscribe({
-      next: (updated) => {
+      next: () => {
         this.applications.update((apps) =>
           apps.map((a) =>
             a.id === applicationId
-              ? { ...a, assignedReviewer: updated.assignedReviewer, status: updated.status }
+              ? { ...a, assignedReviewer: id ?? undefined, status: newStatus, updatedAt: new Date().toISOString() }
               : a
           )
         );

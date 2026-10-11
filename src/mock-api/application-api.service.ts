@@ -22,8 +22,12 @@ export class ApplicationApiService {
     return this.http.get<MerchantApplication[]>(this.base).pipe(
       map((all) => {
         let filtered = all.filter((app) => {
-          if (role === 'SALES')    return app.createdBy === userId;
-          if (role === 'REVIEWER') return app.assignedReviewer === userId;
+          if (role === 'SALES') {
+            return app.createdBy === userId || app.assignedReviewer === userId;
+          }
+          if (role === 'REVIEWER') {
+            return app.assignedReviewer === userId;
+          }
           return true;
         });
 

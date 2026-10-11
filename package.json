@@ -8,6 +8,7 @@
     "start:server": "node mock-server/generate-db.mjs && node mock-server/server.mjs",
     "mock-server": "node mock-server/generate-db.mjs && node mock-server/server.mjs",
     "build": "ng build",
+    "vercel-build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "vitest --run",
     "test:watch": "vitest",

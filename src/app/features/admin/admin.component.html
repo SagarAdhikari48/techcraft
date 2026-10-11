@@ -100,8 +100,8 @@
                 <td>
                   <select
                     class="form-select form-select-sm admin__assign-select"
-                    [value]="app.assignedReviewer ?? ''"
-                    (change)="assignReviewer(app.id, $any($event.target).value)"
+                    [ngModel]="getReviewerValue(app.id)"
+                    (ngModelChange)="onReviewerChange(app.id, $event)"
                     [disabled]="saving() === app.id"
                     [attr.aria-label]="'Assign reviewer for ' + app.merchantName"
                   >

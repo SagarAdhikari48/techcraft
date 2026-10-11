@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApplicationApiService } from '../../../mock-api/application-api.service';
@@ -14,7 +14,7 @@ type LoadState = 'loading' | 'success' | 'error';
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [ReactiveFormsModule, StatusBadgeComponent],
+  imports: [ReactiveFormsModule, FormsModule, StatusBadgeComponent],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',
 })
@@ -28,6 +28,7 @@ export class AdminComponent implements OnInit {
   readonly applications = signal<ApplicationSummary[]>([]);
   readonly reviewers    = signal<User[]>([]);
   readonly saving       = signal<string | null>(null);
+  readonly reviewerMap  = signal<Record<string, string>>({});
 
   private readonly filterValues = signal({ search: '', status: '', reviewer: '' });
 
@@ -82,6 +83,10 @@ export class AdminComponent implements OnInit {
       next: ({ applications, reviewers }) => {
         this.applications.set(applications);
         this.reviewers.set(reviewers);
+        // Build reviewer map for two-way binding in dropdowns
+        const map: Record<string, string> = {};
+        applications.forEach(a => { map[a.id] = a.assignedReviewer ?? ''; });
+        this.reviewerMap.set(map);
         this.loadState.set('success');
       },
       error: () => this.loadState.set('error'),
@@ -95,6 +100,7 @@ export class AdminComponent implements OnInit {
 
     this.api.assignReviewer(applicationId, id).subscribe({
       next: () => {
+        // Update the applications signal
         this.applications.update((apps) =>
           apps.map((a) =>
             a.id === applicationId
@@ -102,10 +108,20 @@ export class AdminComponent implements OnInit {
               : a
           )
         );
+        // Update the reviewer map signal so ngModel reflects the new value
+        this.reviewerMap.update(m => ({ ...m, [applicationId]: id ?? '' }));
         this.saving.set(null);
       },
       error: () => this.saving.set(null),
     });
+  }
+
+  getReviewerValue(appId: string): string {
+    return this.reviewerMap()[appId] ?? '';
+  }
+
+  onReviewerChange(appId: string, value: string): void {
+    this.assignReviewer(appId, value);
   }
 
   viewApplication(id: string): void {

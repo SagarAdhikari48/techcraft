@@ -1,41 +1,53 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, throwError } from 'rxjs';
 import { AuthTokens, AuthState, User, UserRole } from '../models/user.model';
 import { MockAuthService } from '../../../mock-api/mock-auth.service';
+import { environment } from '../../../environments/environment';
 
-const STORAGE_KEY_USER = 'tc_user';
+const STORAGE_KEY_USER   = 'tc_user';
 const STORAGE_KEY_TOKENS = 'tc_tokens';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly mockAuth = inject(MockAuthService);
-  private readonly router = inject(Router);
+  private readonly http      = inject(HttpClient);
+  private readonly mockAuth  = inject(MockAuthService);
+  private readonly router    = inject(Router);
 
   private readonly _state = signal<AuthState>(this.loadFromStorage());
 
-  readonly user = computed(() => this._state().user);
-  readonly tokens = computed(() => this._state().tokens);
+  readonly user            = computed(() => this._state().user);
+  readonly tokens          = computed(() => this._state().tokens);
   readonly isAuthenticated = computed(() => this._state().isAuthenticated);
-  readonly role = computed(() => this._state().user?.role ?? null);
+  readonly role            = computed(() => this._state().user?.role ?? null);
 
   login(email: string, password: string): Observable<{ user: User; tokens: AuthTokens }> {
     return this.mockAuth.login(email, password).pipe(
-      tap(({ user, tokens }) => {
-        this.setSession(user, tokens);
-      }),
+      tap(({ user, tokens }) => this.setSession(user, tokens)),
       catchError((err) => throwError(() => err))
     );
   }
 
   refresh(refreshToken: string): Observable<AuthTokens> {
+    if (environment.production) {
+      return this.http.post<AuthTokens>(
+        `${environment.apiUrl}/auth/refresh`,
+        { refreshToken }
+      ).pipe(
+        tap((tokens) => {
+          const current = this._state();
+          if (current.user) this.setSession(current.user, tokens);
+        }),
+        catchError(() => throwError(() => ({ status: 401, message: 'Invalid refresh token' })))
+      );
+    }
     return this.mockAuth.refresh(refreshToken).pipe(
       tap((tokens) => {
         const current = this._state();
-        if (current.user) {
-          this.setSession(current.user, tokens);
-        }
-      })
+        if (current.user) this.setSession(current.user, tokens);
+      }),
+      catchError(() => throwError(() => ({ status: 401, message: 'Invalid refresh token' })))
     );
   }
 
@@ -66,12 +78,12 @@ export class AuthService {
 
   private loadFromStorage(): AuthState {
     try {
-      const user = sessionStorage.getItem(STORAGE_KEY_USER);
+      const user   = sessionStorage.getItem(STORAGE_KEY_USER);
       const tokens = sessionStorage.getItem(STORAGE_KEY_TOKENS);
       if (user && tokens) {
         return {
-          user: JSON.parse(user) as User,
-          tokens: JSON.parse(tokens) as AuthTokens,
+          user:            JSON.parse(user) as User,
+          tokens:          JSON.parse(tokens) as AuthTokens,
           isAuthenticated: true,
         };
       }

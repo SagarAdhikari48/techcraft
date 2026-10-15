@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 import { of, throwError, firstValueFrom } from 'rxjs';
 import { vi } from 'vitest';
 import { AuthService } from './auth.service';
@@ -32,6 +33,7 @@ function createService(): AuthService {
   TestBed.configureTestingModule({
     providers: [
       AuthService,
+      provideHttpClient(),
       { provide: MockAuthService, useValue: mockAuthStub },
       { provide: Router, useValue: routerStub },
     ],

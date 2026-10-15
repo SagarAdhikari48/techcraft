@@ -15,6 +15,7 @@ const rewriter = jsonServer.rewriter(rawRoutes);
 const ALLOWED_ORIGINS = [
   'http://localhost:4200',
   'https://techcraft-three.vercel.app',
+  'https://techcraft-merchant-payments-portal.vercel.app',
 ];
 
 server.use((req, res, next) => {
